@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  node-app:
+    container_name: Node-App
+    image: engm89/mk-docer-aws
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./.env
+    depends_on:
+      - mongo
+    
+  mongo:
+    container_name: Mongo
+    image: mongo
+    restart: always
+    volumes:
+      - mongo-db:/data/db 
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+
+  mongo-express:
+    container_name: Mongo-Express
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    depends_on:
+      - mongo
+
+  radis:
+    container_name: Redis
+    image: redis
+    
+  web:
+    container_name: Nginx
+    image: nginx:stable-alpine
+    ports:
+    - "8080:80"
+
+
+volumes:
+  mongo-db:
+      
